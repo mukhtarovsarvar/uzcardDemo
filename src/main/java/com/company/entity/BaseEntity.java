@@ -1,8 +1,10 @@
 package com.company.entity;
 
 
+import com.company.enums.EntityStatus;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,12 +16,13 @@ public class BaseEntity {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    private String uuid;
 
-    @Column(name = "create_date")
-    protected LocalDateTime createDate = LocalDateTime.now();
-    @Column(name = "update_date")
-    protected LocalDateTime updateDate;
+    private LocalDateTime createDate = LocalDateTime.now();
+
+
+
 
 }
