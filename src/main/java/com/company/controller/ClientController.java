@@ -39,4 +39,29 @@ public class ClientController {
     }
 
 
+    @PutMapping("/{phoneNumber}/change")
+    public ResponseEntity<?> changePhone(@PathVariable("phoneNumber") String phoneNumber,
+                                          @RequestParam("newPhone") String newPhone) {
+
+        return ResponseEntity.ok(clientService.changePhone(phoneNumber,newPhone));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<?> get(@RequestParam(value = "page",defaultValue = "0") int page,
+                                 @RequestParam(value = "size",defaultValue = "30") int size){
+        return ResponseEntity.ok(clientService.getList(page, size));
+    }
+
+
+    @GetMapping("/{phoneNumber}")
+    public ResponseEntity<?> getByPhone(@PathVariable("phoneNumber") String phone){
+        return ResponseEntity.ok(clientService.getById(phone));
+    }
+
+    @GetMapping("/clients")
+    public ResponseEntity<?> getClients(){
+        return ResponseEntity.ok(clientService.getProfileClients());
+    }
+
+
 }

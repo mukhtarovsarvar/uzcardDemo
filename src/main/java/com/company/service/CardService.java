@@ -16,6 +16,8 @@ public class CardService {
     private final SalesCardNumberRepository salesNumberRepository;
 
 
+
+
     public List<SalesCardNumber> generatorSaveCardNumber() {
         long count = salesNumberRepository.count();
 

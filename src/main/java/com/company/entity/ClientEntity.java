@@ -23,4 +23,6 @@ public class ClientEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
 
+    private String profileName;
+
 }
