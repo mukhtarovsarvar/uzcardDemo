@@ -2,7 +2,7 @@ package com.company.service;
 
 
 import com.company.dto.ClientDTO;
-import com.company.dto.reponse.ClientResponseDTO;
+import com.company.dto.request.ClientRequestDTO;
 import com.company.entity.ClientEntity;
 import com.company.enums.EntityStatus;
 import com.company.exceptions.AppBadRequestException;
@@ -26,7 +26,7 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
 
-    public ClientDTO create(ClientResponseDTO dto) {
+    public ClientDTO create(ClientRequestDTO dto) {
 
         check(dto.getPhone());
 
@@ -48,7 +48,7 @@ public class ClientService {
         return toDTO(entity);
     }
 
-    public ClientDTO update(String phone, ClientResponseDTO dto) {
+    public ClientDTO update(String phone, ClientRequestDTO dto) {
 
         check(phone);
 
@@ -102,13 +102,13 @@ public class ClientService {
         return new PageImpl<>(clientDTOS, pageable, entityPage.getTotalElements());
     }
 
-    public ClientDTO getById(String phoneNumber) {
+    public ClientDTO getByPhoneNumber(String phoneNumber) {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
         String profileName = authentication.getName();
 
         if (!profileName.equals("admin")) {
-            return toDTO(clientRepository.findByPhoneAndProfileNameAndStatus(phoneNumber, profileName,EntityStatus.ACTIVE).orElseThrow(() -> {
+            return toDTO(clientRepository.findByPhoneAndProfileNameAndStatus(phoneNumber, profileName, EntityStatus.ACTIVE).orElseThrow(() -> {
                 throw new ItemNotFoundException("client not found!");
             }));
         }
@@ -119,13 +119,31 @@ public class ClientService {
     }
 
 
-    public List<ClientDTO> getProfileClients(){
+    public ClientDTO getById(String id) {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        String profileName = authentication.getName();
+
+        if (!profileName.equals("admin")) {
+            return toDTO(clientRepository.findByUuidAndProfileNameAndStatus(id, profileName, EntityStatus.ACTIVE).orElseThrow(() -> {
+                throw new ItemNotFoundException("Cleint not found!");
+            }));
+
+        }
+
+        return toDTO(clientRepository.findById(id).orElseThrow(() -> {
+            throw new ItemNotFoundException("Cleint not found!");
+        }));
+    }
+
+    public List<ClientDTO> getProfileClients() {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return clientRepository.findByProfileNameAndStatus(name, EntityStatus.ACTIVE)
                 .stream().map(this::toDTO).toList();
     }
+
     public void check(String phone) {
         String substring = phone.substring(4);
 

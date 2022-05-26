@@ -1,13 +1,12 @@
 package com.company.controller;
 
 import com.company.dto.ClientDTO;
-import com.company.dto.reponse.ClientResponseDTO;
+import com.company.dto.request.ClientRequestDTO;
 import com.company.enums.EntityStatus;
 import com.company.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,13 +20,13 @@ public class ClientController {
 
 
     @PostMapping("")
-    public ResponseEntity<ClientDTO> create(@RequestBody ClientResponseDTO dto) {
+    public ResponseEntity<ClientDTO> create(@RequestBody ClientRequestDTO dto) {
         return ResponseEntity.ok(clientService.create(dto));
     }
 
 
     @PutMapping("")
-    public ResponseEntity<?> update(@RequestBody ClientResponseDTO dto) {
+    public ResponseEntity<?> update(@RequestBody ClientRequestDTO dto) {
         return ResponseEntity.ok(clientService.update(dto.getPhone(), dto));
     }
 
@@ -55,7 +54,7 @@ public class ClientController {
 
     @GetMapping("/{phoneNumber}")
     public ResponseEntity<?> getByPhone(@PathVariable("phoneNumber") String phone){
-        return ResponseEntity.ok(clientService.getById(phone));
+        return ResponseEntity.ok(clientService.getByPhoneNumber(phone));
     }
 
     @GetMapping("/clients")

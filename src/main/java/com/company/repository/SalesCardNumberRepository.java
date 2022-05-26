@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface SalesCardNumberRepository extends JpaRepository<SalesCardNumber, String> {
 
     Optional<SalesCardNumber> findByCardNumber(String cardNum);
+
+    Optional<SalesCardNumber> findTop1By();
 }

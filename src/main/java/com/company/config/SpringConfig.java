@@ -10,6 +10,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class SpringConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String[] AUTH_WHITELIST = {
+            "/v2/api-docs",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-resources",
+            "/swagger-resources/**"
+    };
 
     @Override   // Authentication
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -25,6 +36,7 @@ public class SpringConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/category/**").permitAll()
                 .antMatchers("/admin/**").hasAnyRole("admin")
                 .antMatchers("/profile/**").hasAnyRole("profile")
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated().and().httpBasic();
 
         http.csrf().disable().cors().disable();
