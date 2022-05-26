@@ -6,9 +6,12 @@ import com.company.dto.reponse.ClientResponseDTO;
 import com.company.entity.ClientEntity;
 import com.company.enums.EntityStatus;
 import com.company.exp.AppBadRequestException;
+import com.company.exp.ItemNotFoundException;
 import com.company.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,42 @@ public class ClientService {
         clientRepository.save(entity);
 
         return toDTO(entity);
+    }
+
+    public ClientDTO update(String phone,ClientResponseDTO dto){
+
+        String substring = phone.substring(4);
+
+        if (!phone.startsWith("+998") || substring.length() != 9 ){
+            throw new AppBadRequestException("phone number not valid!");
+        }
+
+        ClientEntity entity = clientRepository.findByPhone(phone).orElseThrow(() -> {
+            throw new ItemNotFoundException("cleint not found!");
+        });
+
+
+        entity.setName(dto.getName());
+        entity.setSurname(dto.getSurname());
+        clientRepository.save(entity);
+
+        return toDTO(entity);
+    }
+
+    public Boolean updateStatus(String phone,EntityStatus status){
+        String substring = phone.substring(4);
+
+        if (!phone.startsWith("+998") || substring.length() != 9 ){
+            throw new AppBadRequestException("phone number not valid!");
+        }
+
+        ClientEntity entity = clientRepository.findByPhone(phone).orElseThrow(() -> {
+            throw new ItemNotFoundException("cleint not found!");
+        });
+
+        clientRepository.updateStatus(entity.getUuid(),status);
+
+        return true;
     }
 
     public ClientDTO toDTO( ClientEntity entity){
