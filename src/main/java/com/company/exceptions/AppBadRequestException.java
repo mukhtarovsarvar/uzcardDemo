@@ -1,4 +1,4 @@
-package com.company.exp;
+package com.company.exceptions;
 
 public class AppBadRequestException extends RuntimeException{
     public AppBadRequestException(String message) {
