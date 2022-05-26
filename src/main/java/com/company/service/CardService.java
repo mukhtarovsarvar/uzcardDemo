@@ -1,16 +1,22 @@
 package com.company.service;
 
 import com.company.dto.CardDTO;
+import com.company.dto.request.AssignPhoneDTO;
 import com.company.dto.request.CardRequestDTO;
 import com.company.entity.CardEntity;
 import com.company.entity.SalesCardNumber;
+import com.company.enums.EntityStatus;
+import com.company.exceptions.AppBadRequestException;
+import com.company.exceptions.ItemNotFoundException;
 import com.company.repository.CardRepository;
 import com.company.repository.SalesCardNumberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.CDATASection;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -33,6 +39,7 @@ public class CardService {
         cardEntity.setExpDate(LocalDate.now().plusYears(4).toString());
         SalesCardNumber salesCardNumber = salesNumberRepository.findTop1By().get();
         cardEntity.setNumber(salesCardNumber.getCardNumber());
+        cardEntity.setStatus(EntityStatus.ACTIVE);
 
         cardRepository.save(cardEntity);
 
@@ -41,6 +48,75 @@ public class CardService {
         return toDTO(cardEntity);
     }
 
+
+    public Boolean changeStatus(String cardNumber, EntityStatus status) {
+        Optional<CardEntity> cardEntity = cardRepository.findByNumber(cardNumber);
+        if (cardEntity.isEmpty()) {
+            throw new ItemNotFoundException("card not found!");
+        }
+
+        cardRepository.changeStatus(cardNumber, status);
+        return true;
+    }
+
+    public static void check(String cardNum) {
+
+        if (!cardNum.startsWith("8600") || cardNum.length() != 16) {
+            throw new AppBadRequestException("card number not valid!");
+        }
+
+    }
+
+    public Boolean assignPhone(AssignPhoneDTO dto) {
+        check(dto.getCardNum());
+
+        ClientService.check(dto.getPhone());
+
+        Optional<CardEntity> cardEntity = cardRepository.findByNumber(dto.getCardNum());
+
+        if (cardEntity.isEmpty()) throw new ItemNotFoundException("Card not found!");
+
+        cardRepository.updatePhone(dto.getPhone(), dto.getCardNum());
+
+        return true;
+    }
+
+    public List<CardDTO> getByPhone(String phone) {
+        ClientService.check(phone);
+
+        return cardRepository.findByPhoneNUmber(phone).stream().map(this::toDTO).toList();
+    }
+
+    public List<CardDTO> getByClientId(String id) {
+        clientService.getById(id);
+
+        return cardRepository.findByClientId(id).stream().map(this::toDTO).toList();
+    }
+
+    public CardDTO getByCardNum(String number) {
+
+        CardEntity cardEntity = cardRepository.findByNumber(number).orElseThrow(() -> {
+            throw new ItemNotFoundException("card not found!");
+        });
+
+        return toDTO(cardEntity);
+    }
+
+    public String getBalanceByCardNumber(String number) {
+        String balance = getByCardNum(number).getBalance().toString();
+
+        if (balance.equals("0")) {
+            return "0 sum";
+        }
+        if (balance.length() < 2) {
+            return "0,0" + balance + " sum";
+        }
+        if (balance.length() < 3) {
+            return "0," + balance + " sum";
+        }
+
+        return balance.substring(0, balance.length() - 2) + " sum";
+    }
 
 
     public CardDTO toDTO(CardEntity entity) {
@@ -51,6 +127,7 @@ public class CardService {
         dto.setExpDate(entity.getExpDate());
         return dto;
     }
+
 
     public String cardStars(String cardNum) {
         return cardNum.substring(0, 4) +
@@ -82,6 +159,7 @@ public class CardService {
             cardNumber.append(code);
         }
         var salesCard = salesNumberRepository.findByCardNumber(cardNumber.toString());
+
         var cardEntity = cardRepository.findByNumber(cardNumber.toString());
 
         if (cardEntity.isPresent() || salesCard.isPresent())

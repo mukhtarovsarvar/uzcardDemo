@@ -1,5 +1,6 @@
 package com.company.entity;
 
+import com.company.enums.EntityStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,5 +25,8 @@ public class CardEntity extends BaseEntity {
     private ClientEntity client;
 
     private String phoneNUmber;
+
+    private EntityStatus status;
+
 
 }

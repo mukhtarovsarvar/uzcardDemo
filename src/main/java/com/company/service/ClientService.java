@@ -118,7 +118,6 @@ public class ClientService {
         }));
     }
 
-
     public ClientDTO getById(String id) {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
@@ -144,7 +143,7 @@ public class ClientService {
                 .stream().map(this::toDTO).toList();
     }
 
-    public void check(String phone) {
+    public  static void check(String phone) {
         String substring = phone.substring(4);
 
         if (!phone.startsWith("+998") || substring.length() != 9) {
