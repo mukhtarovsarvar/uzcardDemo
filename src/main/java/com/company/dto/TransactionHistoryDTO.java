@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class TransactionHistoryDTO implements Serializable {
+public class TransactionHistoryDTO   {
     private  String uuid;
     private  LocalDateTime createDate;
     private  String fromCard;

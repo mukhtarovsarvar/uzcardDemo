@@ -26,10 +26,15 @@ public interface CardRepository extends JpaRepository<CardEntity, String> {
     @Query("update CardEntity set phoneNUmber = :phoneNumber where  number =:cardNum")
     void updatePhone(@Param("phoneNumber") String phoneNumber,@Param("cardNum") String cardNum);
 
-    List<CardEntity> findByPhoneNUmber(String phone);
+    List<CardEntity> findByPhoneNUmberAndStatus(String phone,EntityStatus status);
 
     List<CardEntity> findByClientId(String id);
 
+
+    @Modifying
+    @Transactional
+    @Query("update CardEntity set balance = :balance where  number = :cardNum")
+    void updateBalance(@Param("balance") Long balance, @Param("cardNum") String cardNum);
 
 
 }

@@ -84,7 +84,7 @@ public class CardService {
     public List<CardDTO> getByPhone(String phone) {
         ClientService.check(phone);
 
-        return cardRepository.findByPhoneNUmber(phone).stream().map(this::toDTO).toList();
+        return cardRepository.findByPhoneNUmberAndStatus(phone,EntityStatus.ACTIVE).stream().map(this::toDTO).toList();
     }
 
     public List<CardDTO> getByClientId(String id) {
@@ -92,6 +92,8 @@ public class CardService {
 
         return cardRepository.findByClientId(id).stream().map(this::toDTO).toList();
     }
+
+
 
     public CardDTO getByCardNum(String number) {
 
@@ -123,17 +125,13 @@ public class CardService {
         CardDTO dto = new CardDTO();
         dto.setBalance(entity.getBalance());
         dto.setClientId(entity.getClientId());
-        dto.setNumber(cardStars(entity.getNumber()));
+        dto.setNumber(entity.getNumber());
         dto.setExpDate(entity.getExpDate());
         return dto;
     }
 
 
-    public String cardStars(String cardNum) {
-        return cardNum.substring(0, 4) +
-                "********" +
-                cardNum.substring(cardNum.length() - 4);
-    }
+
 
 
     public List<SalesCardNumber> generatorSaveCardNumber() {

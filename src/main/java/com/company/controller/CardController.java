@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/card")
+@RequestMapping("/api/v1/card")
 public class CardController {
 
     private final CardService cardService;
