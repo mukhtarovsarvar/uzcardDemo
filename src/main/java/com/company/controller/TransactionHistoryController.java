@@ -1,6 +1,7 @@
 package com.company.controller;
 
 import com.company.dto.request.TransactionDTO;
+import com.company.dto.request.TransactionFilterDTO;
 import com.company.service.TransactionalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,5 +54,10 @@ public class TransactionHistoryController {
         return ResponseEntity.ok(transactionalService.getByProfileName(clientId, page, size));
     }
 
+
+    @PostMapping("/filter")
+    public ResponseEntity<?> filter(@RequestBody TransactionFilterDTO dto){
+        return ResponseEntity.ok(transactionalService.filter(dto));
+    }
 
 }

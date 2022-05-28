@@ -3,17 +3,18 @@ package com.company.service;
 import com.company.dto.CardDTO;
 import com.company.dto.TransactionHistoryDTO;
 import com.company.dto.request.TransactionDTO;
+import com.company.dto.request.TransactionFilterDTO;
 import com.company.entity.TransactionHistoryEntity;
 import com.company.enums.TransactionalStatus;
 import com.company.exceptions.AppBadRequestException;
 import com.company.repository.CardRepository;
 import com.company.repository.TransactionHistoryRepository;
+import com.company.repository.custom.TransactionCustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,7 @@ public class TransactionalService {
 
     private final ClientService clientService;
 
+    private final TransactionCustomRepository transactionCustomRepository;
     public TransactionHistoryDTO create(TransactionDTO dto) {
 
         if (dto.getFromCard().equals(dto.getToCard())) {
@@ -151,6 +153,10 @@ public class TransactionalService {
         List<TransactionHistoryDTO> list = entityPage.stream().map(this::toDTO).toList();
 
         return new PageImpl<>(list, pageable, entityPage.getTotalElements());
+    }
+
+    public List<TransactionHistoryDTO> filter(TransactionFilterDTO dto){
+        return transactionCustomRepository.filter(dto);
     }
 
     public TransactionHistoryDTO toDTO(TransactionHistoryEntity entity) {

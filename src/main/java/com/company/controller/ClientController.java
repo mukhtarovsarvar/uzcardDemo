@@ -1,5 +1,7 @@
 package com.company.controller;
 
+
+
 import com.company.dto.ClientDTO;
 import com.company.dto.request.ClientRequestDTO;
 import com.company.enums.EntityStatus;
@@ -56,6 +58,7 @@ public class ClientController {
     public ResponseEntity<?> getByPhone(@PathVariable("phoneNumber") String phone){
         return ResponseEntity.ok(clientService.getByPhoneNumber(phone));
     }
+
 
     @GetMapping("/clients")
     public ResponseEntity<?> getClients(){

@@ -3,6 +3,7 @@ package com.company.controller;
 import com.company.dto.CardDTO;
 import com.company.dto.ClientDTO;
 import com.company.dto.request.AssignPhoneDTO;
+import com.company.dto.request.CardFilterDTO;
 import com.company.dto.request.CardRequestDTO;
 import com.company.entity.SalesCardNumber;
 import com.company.enums.EntityStatus;
@@ -65,4 +66,10 @@ public class CardController {
     public ResponseEntity<List<SalesCardNumber>> generatorCardNumber() {
         return ResponseEntity.ok(cardService.generatorSaveCardNumber());
     }
+
+    @PostMapping("/filter")
+    public ResponseEntity<?> filter(@RequestBody CardFilterDTO dto) {
+        return ResponseEntity.ok(cardService.filter(dto));
+    }
+
 }

@@ -2,6 +2,7 @@ package com.company.service;
 
 import com.company.dto.CardDTO;
 import com.company.dto.request.AssignPhoneDTO;
+import com.company.dto.request.CardFilterDTO;
 import com.company.dto.request.CardRequestDTO;
 import com.company.entity.CardEntity;
 import com.company.entity.SalesCardNumber;
@@ -10,6 +11,7 @@ import com.company.exceptions.AppBadRequestException;
 import com.company.exceptions.ItemNotFoundException;
 import com.company.repository.CardRepository;
 import com.company.repository.SalesCardNumberRepository;
+import com.company.repository.custom.CardCustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.CDATASection;
@@ -25,8 +27,9 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final SalesCardNumberRepository salesNumberRepository;
-
     private final ClientService clientService;
+
+    private final CardCustomRepository cardCustomRepository;
 
 
     public CardDTO create(CardRequestDTO dto) {
@@ -94,6 +97,9 @@ public class CardService {
     }
 
 
+    public List<CardDTO> filter(CardFilterDTO dto){
+        return cardCustomRepository.filter(dto);
+    }
 
     public CardDTO getByCardNum(String number) {
 
@@ -121,7 +127,7 @@ public class CardService {
     }
 
 
-    public CardDTO toDTO(CardEntity entity) {
+    public  CardDTO  toDTO(CardEntity entity) {
         CardDTO dto = new CardDTO();
         dto.setBalance(entity.getBalance());
         dto.setClientId(entity.getClientId());
