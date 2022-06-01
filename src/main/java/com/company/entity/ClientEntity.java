@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-@Entity
+@Entity(name = "clients")
 @Setter
 @Getter
 public class ClientEntity extends BaseEntity {

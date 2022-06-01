@@ -18,12 +18,12 @@ public interface CardRepository extends JpaRepository<CardEntity, String> {
 
     @Modifying
     @Transactional
-    @Query("update CardEntity set status = :status where  number = :cardNum")
+    @Query("update cards set status = :status where  number = :cardNum")
     void changeStatus(@Param("cardNum") String cardNum, @Param("status") EntityStatus status);
 
     @Modifying
     @Transactional
-    @Query("update CardEntity set phoneNUmber = :phoneNumber where  number =:cardNum")
+    @Query("update cards set phoneNUmber = :phoneNumber where  number =:cardNum")
     void updatePhone(@Param("phoneNumber") String phoneNumber,@Param("cardNum") String cardNum);
 
     List<CardEntity> findByPhoneNUmberAndStatus(String phone,EntityStatus status);
@@ -33,7 +33,7 @@ public interface CardRepository extends JpaRepository<CardEntity, String> {
 
     @Modifying
     @Transactional
-    @Query("update CardEntity set balance = :balance where  number = :cardNum")
+    @Query("update cards set balance = :balance where  number = :cardNum")
     void updateBalance(@Param("balance") Long balance, @Param("cardNum") String cardNum);
 
 

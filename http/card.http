@@ -1,0 +1,31 @@
+
+### card create
+POST http://localhost:8080/api/v1/card/create
+Content-Type: application/json
+Authorization: Basic click clickjon
+
+{
+  "clientId": "8a8a81bc81132a510181132a6e340000"
+}
+
+
+
+
+###
+POST http://localhost:8080/api/v1/card/filter
+Content-Type: application/json
+Authorization: Basic click clickjon
+
+{
+  "status": "ACTIVE"
+}
+
+### card create
+POST http://167.172.66.39:9091/v1/card
+Content-Type: application/json
+Authorization: Basic bank bankjon
+
+{
+  "balance": 234567890765432,
+  "clientId": "ff8081818113a69e018113aa89b2000a"
+}

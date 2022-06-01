@@ -1,0 +1,44 @@
+
+
+### create client
+POST http://localhost:8080/api/v1/client
+Content-Type: application/json
+Authorization: Basic click clickjon
+
+{
+  "name": "Vali",
+  "phone": "+998330030528",
+  "surname": "Valiev"
+}
+
+### update
+PUT http://localhost:8080/api/v1/client
+Content-Type: application/json
+Authorization: Basic click clickjon
+
+{
+  "name": "Vali",
+  "phone": "+998330030528",
+  "surname": "valiev"
+}
+
+
+
+### create
+POST http://167.172.66.39:9091/v1/client
+Authorization: Basic bank bankjon
+Content-Type: application/json
+
+{
+  "name": "Sarvar",
+  "surname": "Mukhtarov",
+  "middleName": "Alisher",
+  "phone": "+998330030528"
+}
+
+
+### GET ALL
+GET http://167.172.66.39:9091/v1/client/pagination
+Authorization: Basic admin adminjon
+
+

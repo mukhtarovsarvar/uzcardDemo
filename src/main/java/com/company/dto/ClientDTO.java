@@ -17,4 +17,8 @@ public class ClientDTO  {
     private  String name;
     private  String surname;
     private  String phone;
+
+    public ClientDTO(String clf_id, String clf_name, String clf_surname, String clf_phone) {
+
+    }
 }

@@ -18,14 +18,14 @@ public interface ClientRepository extends JpaRepository<ClientEntity, String> {
 
     @Modifying
     @Transactional
-    @Query("update ClientEntity set status = :status where uuid = :id")
+    @Query("update clients set status = :status where uuid = :id")
     void updateStatus(@Param("id") String id, @Param("status")EntityStatus status);
 
 
 
     @Modifying
     @Transactional
-    @Query("update ClientEntity set phone = :newPhone where phone = :phone")
+    @Query("update clients set phone = :newPhone where phone = :phone")
     void updatePhone(@Param("phone") String phone, @Param("newPhone")String newPhone);
 
 

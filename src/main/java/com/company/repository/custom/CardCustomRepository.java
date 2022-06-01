@@ -1,14 +1,18 @@
 package com.company.repository.custom;
 
-import com.company.dto.CardDTO;
+
 import com.company.dto.request.CardFilterDTO;
 import com.company.entity.CardEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -16,51 +20,59 @@ public class CardCustomRepository {
 
     private final EntityManager entityManager;
 
-    public List<CardDTO> filter(CardFilterDTO filter) {
-      /*  String sql = "SELECT  c FROM  CardEntity as c";
-        Query query = entityManager.createQuery(sql, CardEntity.class);
-        List<CardEntity> cardEntityList = query.getResultList();*/
+    @Value("${message.bank.key.word}")
+    private String keyWord;
 
-        StringBuilder sql = new StringBuilder("SELECT  c FROM  CardEntity as c ");
-        if (filter != null) {
-            sql.append(" WHERE c.status = '").append(filter.getStatus().name()).append("'");
-        } else {
-            sql.append(" WHERE c.status = 'ACTIVE'");
+
+    public List<CardEntity> filter(CardFilterDTO dto) {
+        StringBuilder sql = new StringBuilder(
+                "select c from CardEntity c " +
+                        "left join c.client cl " +
+                        "where c.visible = true " +
+                        "and cast(c.status as string) <> :keyWord ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyWord", keyWord);
+
+
+
+        if (Optional.ofNullable(dto.getCardNumber()).isPresent()) {
+            sql.append(" and c.cardNumber = :cardNumber ");
+            params.put("cardNumber", dto.getCardNumber());
         }
 
-        if (filter.getCardId() != null) {
-            sql.append(" AND  c.uuid = '").append(filter.getCardId()).append("'");
-        }
-        if (filter.getCardNumber() != null) {
-            sql.append(" AND  c.number = ").append(filter.getCardId());
-        }
-
-        if (filter.getAmountFrom() != null && filter.getToAmount() != null) {
-            sql.append(" AND  c.balance between ").append(filter.getAmountFrom()).append(" AND ").append(filter.getToAmount());
-        } else if (filter.getAmountFrom() != null) {
-            sql.append(" AND  c.balance > ").append(filter.getAmountFrom());
-        } else if (filter.getToAmount() != null) {
-            sql.append(" AND  c.balance < ").append(filter.getToAmount());
+        if (Optional.ofNullable(dto.getAmountFrom()).isPresent() &&
+                Optional.ofNullable(dto.getToAmount()).isPresent()) {
+            sql.append(" and c.balance between :fromBalance and :toBalance ");
+            params.put("fromBalance", Long.parseLong(dto.getAmountFrom() + "00"));
+            params.put("toBalance",  Long.parseLong(dto.getToAmount() + "00"));
+        } else if (Optional.ofNullable(dto.getAmountFrom()).isPresent()) {
+            sql.append(" and c.balance > :fromBalance ");
+            params.put("fromBalance", Long.parseLong(dto.getAmountFrom() + "00"));
+        } else if (Optional.ofNullable(dto.getToAmount()).isPresent()) {
+            sql.append(" and c.balance < :toBalance ");
+            params.put("toBalance", Long.parseLong(dto.getToAmount() + "00"));
         }
 
-        if (filter.getProfileName() != null) {
-            sql.append(" AND  c.profile_name = '").append(filter.getProfileName()).append("'");
+        if (Optional.ofNullable(dto.getProfileName()).isPresent()) {
+            sql.append(" and cl.profileName = :profileName ");
+            params.put("profileName", dto.getProfileName());
+        }
+
+        if (Optional.ofNullable(dto.getStatus()).isPresent()) {
+            sql.append(" and c.status = :status ");
+            params.put("status", dto.getStatus());
+        }
+
+        if (Optional.ofNullable(dto.getClientId()).isPresent()) {
+            sql.append(" and cl.id = :id ");
+            params.put("id", dto.getClientId());
         }
 
         Query query = entityManager.createQuery(sql.toString(), CardEntity.class);
-        List<CardEntity> cardEntityList = query.getResultList();
 
+        params.forEach(query::setParameter);
 
-        return cardEntityList.stream().map(this::toDTO).toList();
+        return query.getResultList();
     }
-
-    public  CardDTO  toDTO(CardEntity entity) {
-        CardDTO dto = new CardDTO();
-        dto.setBalance(entity.getBalance());
-        dto.setClientId(entity.getClientId());
-        dto.setNumber(entity.getNumber());
-        dto.setExpDate(entity.getExpDate());
-        return dto;
-    }
-
 }

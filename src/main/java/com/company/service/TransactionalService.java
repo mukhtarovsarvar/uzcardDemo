@@ -1,12 +1,14 @@
 package com.company.service;
 
 import com.company.dto.CardDTO;
+import com.company.dto.ClientDTO;
 import com.company.dto.TransactionHistoryDTO;
 import com.company.dto.request.TransactionDTO;
 import com.company.dto.request.TransactionFilterDTO;
 import com.company.entity.TransactionHistoryEntity;
 import com.company.enums.TransactionalStatus;
 import com.company.exceptions.AppBadRequestException;
+import com.company.mapper.TransactionInfoMapper;
 import com.company.repository.CardRepository;
 import com.company.repository.TransactionHistoryRepository;
 import com.company.repository.custom.TransactionCustomRepository;
@@ -42,9 +44,9 @@ public class TransactionalService {
 
         dto.setProfileName(name);
 
-        CardDTO toCard = cardService.getByCardNum(dto.getToCard());
+        CardDTO toCard = cardService.getByCardNum(dto.getToCardNumber());
 
-        CardDTO fromCard = cardService.getByCardNum(dto.getFromCard());
+        CardDTO fromCard = cardService.getByCardNum(dto.getFromCardNumber());
         if (fromCard.getBalance() < dto.getAmount()) {
             throw new AppBadRequestException("balance not avaible!");
         }
@@ -53,18 +55,18 @@ public class TransactionalService {
             throw new AppBadRequestException("amaunt!");
         }
 
-        cardRepository.updateBalance(toCard.getBalance() + dto.getAmount(), dto.getToCard());
+        cardRepository.updateBalance(toCard.getBalance() + dto.getAmount(), dto.getToCardNumber());
 
 
-        cardRepository.updateBalance(fromCard.getBalance() - dto.getAmount(), dto.getFromCard());
+        cardRepository.updateBalance(fromCard.getBalance() - dto.getAmount(), dto.getFromCardNumber());
 
 
         TransactionHistoryEntity entity = new TransactionHistoryEntity();
         entity.setAmount(dto.getAmount());
-        entity.setFromCard(dto.getFromCard());
+        entity.setFromCard(dto.getFromCardNumber());
         entity.setProfileName(dto.getProfileName());
         entity.setStatus(TransactionalStatus.SUCCESS);
-        entity.setToCard(dto.getToCard());
+        entity.setToCard(dto.getToCardNumber());
 
         transactionRepository.save(entity);
 
@@ -155,9 +157,32 @@ public class TransactionalService {
         return new PageImpl<>(list, pageable, entityPage.getTotalElements());
     }
 
-    public List<TransactionHistoryDTO> filter(TransactionFilterDTO dto){
-        return transactionCustomRepository.filter(dto);
+    public List<TransactionDTO> filter(TransactionFilterDTO dto){
+
+        return transactionCustomRepository.filter(dto).stream().map(this::toDTOMapper).toList();
+
     }
+
+
+
+
+    public TransactionDTO toDTOMapper(TransactionInfoMapper mapper) {
+        TransactionDTO dto = new TransactionDTO();
+
+        dto.setId(mapper.getT_id());
+        dto.setCash(mapper.getT_amount().toString());
+        dto.setStatus(mapper.getT_status());
+        dto.setCreatedDate(mapper.getT_created_date());
+
+        dto.setFromCard(new CardDTO(mapper.getCf_id(), cardStars(mapper.getCf_number()),
+                new ClientDTO(mapper.getClf_id(), mapper.getClf_name(), mapper.getClf_surname(), mapper.getClf_phone())));
+
+        dto.setToCard(new CardDTO(mapper.getCt_id(), cardStars(mapper.getCt_number()),
+                new ClientDTO(mapper.getClt_id(), mapper.getClt_name(), mapper.getClt_surname(), mapper.getClt_phone())));
+
+        return dto;
+    }
+
 
     public TransactionHistoryDTO toDTO(TransactionHistoryEntity entity) {
         TransactionHistoryDTO dto = new TransactionHistoryDTO();

@@ -17,6 +17,7 @@ class UzcardDemoApplicationTests {
 
     @Autowired
     private com.company.repository.custom.CardCustomRepository cardCustomRepository ;
+
     @Test
     void contextLoads() {
 
@@ -26,7 +27,7 @@ class UzcardDemoApplicationTests {
     }*/
 
 
-        cardCustomRepository.filter(new CardFilterDTO());
+
 
 
 

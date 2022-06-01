@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "cards")
 @Getter
 @Setter
 public class CardEntity extends BaseEntity {

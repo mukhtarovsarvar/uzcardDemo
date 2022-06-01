@@ -17,4 +17,8 @@ public class CardDTO  {
     private  Long balance;
     private  String clientId;
     private  String phoneNUmber;
+
+    public CardDTO(String cf_id, String cardStars, ClientDTO clientDTO) {
+
+    }
 }

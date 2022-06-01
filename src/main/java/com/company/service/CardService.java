@@ -98,7 +98,7 @@ public class CardService {
 
 
     public List<CardDTO> filter(CardFilterDTO dto){
-        return cardCustomRepository.filter(dto);
+        return cardCustomRepository.filter(dto).stream().map(this::toDTO).toList();
     }
 
     public CardDTO getByCardNum(String number) {
